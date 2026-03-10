@@ -1,58 +1,67 @@
 package com.example.BulsAndCows.Controller;
 
-import com.example.BulsAndCows.Entity.NumberRepository;
-import com.example.BulsAndCows.Entity.NumberInt;
+
+import com.example.BulsAndCows.BullsCowsResult;
 import com.example.BulsAndCows.Entity.NumberInfo;
+import com.example.BulsAndCows.Entity.NumberInt;
+import com.example.BulsAndCows.Entity.NumberRepository;
+import com.example.BulsAndCows.GameService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 public class PlayController {
 
-
     private final NumberRepository numberRepository;
-    public PlayController(NumberRepository numberRepository){
+    private final GameService gameService;
+
+    public PlayController(NumberRepository numberRepository, GameService gameService) {
         this.numberRepository = numberRepository;
-    }
-    NumberInt answer = new NumberInt();
-    public double getRandom(int max, int min){
-        return Math.random()*(max-min)+min;
+        this.gameService = gameService;
     }
 
     @GetMapping("/numbers")
-    public ResponseEntity<List<NumberInfo>> getUsers() {
+    public ResponseEntity<List<NumberInfo>> getNumbers() {
         List<NumberInfo> numbers = numberRepository.findAll();
         return ResponseEntity.ok(numbers);
     }
 
-    @PostMapping("start")
-    public ResponseEntity<Void> start(){
-        answer.setFirst((int) getRandom(9,0));
-        answer.setSecond((int) getRandom(9,0));
-        answer.setThird((int) getRandom(9,0));
-        answer.setForth((int) getRandom(9,0));
+
+    @PostMapping("/start")
+    public ResponseEntity<Void> start(HttpSession session) {
+        int[] secret = gameService.generateSecret();
+        session.setAttribute("secret", secret);
         return ResponseEntity.accepted().build();
     }
 
     @PostMapping("/play")
-    public ResponseEntity<NumberInfo> play(@RequestBody NumberInt number){
-        NumberInfo num = new NumberInfo(number);
-        int cows = num.getNumber().getCows(answer.getFirst())+
-                num.getNumber().getCows(answer.getSecond())+
-                num.getNumber().getCows(answer.getThird())+
-                num.getNumber().getCows(answer.getForth());
-        num.setCows(cows);
-        int bulls = num.getNumber().getBulls(answer.getFirst(), 1)+
-                num.getNumber().getBulls(answer.getSecond(), 2)+
-                num.getNumber().getBulls(answer.getThird(), 3)+
-                num.getNumber().getBulls(answer.getForth(), 4);
-        num.setBulls(bulls);
-        num.setResult(num.getNumber().getFirst()*1000+
-                num.getNumber().getSecond()*100+
-                num.getNumber().getThird()*10+
-                num.getNumber().getForth());
-        return ResponseEntity.ok(num);
+    public ResponseEntity<NumberInfo> play(@RequestBody NumberInt guess, HttpSession session) {
+
+        int[] secret = (int[]) session.getAttribute("secret");
+        if (secret == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        int[] guessArray = new int[]{
+                guess.getFirst(),
+                guess.getSecond(),
+                guess.getThird(),
+                guess.getForth()
+        };
+
+        BullsCowsResult result = gameService.countBullsAndCows(secret, guessArray);
+
+
+        NumberInfo numberInfo = new NumberInfo(guess);
+        numberInfo.setBulls(result.getBulls());
+        numberInfo.setCows(result.getCows());
+        numberInfo.setResult(guess.getFirst()*1000 + guess.getSecond()*100 + guess.getThird()*10 + guess.getForth());
+        numberRepository.save(numberInfo);
+
+        return ResponseEntity.ok(numberInfo);
     }
 }
