@@ -1,19 +1,25 @@
 package com.example.BulsAndCows.Entity;
 
-public class Number {
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+@Entity
+public class NumberInt {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     private int first;
-    static int FIRST = 1;
     private int second;
-    static int SECOND = 1;
     private int third;
-    static int THIRD = 1;
     private int forth;
-    static int FORTH = 1;
 
-    public Number(){}
+    public NumberInt(){}
 
-    public Number(int number){
+    public NumberInt(int number){
         this.first = number/1000;
         this.second = (number%1000)/100;
         this.third = (number%100)/10;
@@ -62,7 +68,7 @@ public class Number {
 
     public int getBulls(int a, int ID){
         int bulls = 0;
-        if((a==first && ID==FIRST) || (a==second && ID==SECOND) || (a==third && ID==THIRD) || (a==forth && ID==FORTH)){
+        if((a==first && ID==1) || (a==second && ID==2) || (a==third && ID==3) || (a==forth && ID==4)){
             bulls = 1;
         }
         return bulls;

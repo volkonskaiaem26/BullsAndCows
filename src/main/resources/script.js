@@ -19,17 +19,17 @@ function numbersListSuccess(numbers) {
 }
 
 function numberAddRow(number) {
-   if ($("#userTable tbody").length == 0) {
-      $("#userTable").append("<tbody></tbody>");
+   if ($("#numberTable tbody").length == 0) {
+      $("#numberTable").append("<tbody></tbody>");
    }
-   $("#userTable tbody").append(
+   $("#numberTable tbody").append(
 
       numberBuildTableRow(number));
 }
 
 function numberBuildTableRow(user) {
    return "<tr>" +
-      "<td>" + number.number + "</td>" +
+      "<td>" + number.result + "</td>" +
       "<td>" + number.cows + "</td>" +
       "<td>" + number.bulls + "</td>" +
       "</tr>";

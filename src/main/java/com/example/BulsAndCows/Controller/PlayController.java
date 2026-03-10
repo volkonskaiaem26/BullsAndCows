@@ -1,12 +1,11 @@
 package com.example.BulsAndCows.Controller;
 
-import com.example.BulsAndCows.Configs.NumberRepository;
-import com.example.BulsAndCows.Entity.Number;
+import com.example.BulsAndCows.Entity.NumberRepository;
+import com.example.BulsAndCows.Entity.NumberInt;
 import com.example.BulsAndCows.Entity.NumberInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -17,7 +16,7 @@ public class PlayController {
     public PlayController(NumberRepository numberRepository){
         this.numberRepository = numberRepository;
     }
-    Number answer = new Number();
+    NumberInt answer = new NumberInt();
     public double getRandom(int max, int min){
         return Math.random()*(max-min)+min;
     }
@@ -38,7 +37,7 @@ public class PlayController {
     }
 
     @PostMapping("/play")
-    public ResponseEntity<NumberInfo> play(@RequestBody Number number){
+    public ResponseEntity<NumberInfo> play(@RequestBody NumberInt number){
         NumberInfo num = new NumberInfo(number);
         int cows = num.getNumber().getCows(answer.getFirst())+
                 num.getNumber().getCows(answer.getSecond())+
@@ -50,7 +49,10 @@ public class PlayController {
                 num.getNumber().getBulls(answer.getThird(), 3)+
                 num.getNumber().getBulls(answer.getForth(), 4);
         num.setBulls(bulls);
-        numberRepository.save(num);
+        num.setResult(num.getNumber().getFirst()*1000+
+                num.getNumber().getSecond()*100+
+                num.getNumber().getThird()*10+
+                num.getNumber().getForth());
         return ResponseEntity.ok(num);
     }
 }

@@ -1,6 +1,5 @@
-package com.example.BulsAndCows.Configs;
+package com.example.BulsAndCows.Entity;
 
-import com.example.BulsAndCows.Entity.NumberInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

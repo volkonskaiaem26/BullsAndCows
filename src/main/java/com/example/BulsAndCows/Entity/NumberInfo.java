@@ -1,19 +1,44 @@
 package com.example.BulsAndCows.Entity;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name="numbers")
 public class NumberInfo {
-    private Number number;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @OneToOne
+    private NumberInt number;
+
+    @Column
     private int bulls;
+
+    @Column
     private int cows;
 
-    public NumberInfo(Number number){
+    @Column
+    private int result;
+
+    public NumberInfo(NumberInt number){
         this.number = number;
     }
 
-    public Number getNumber() {
+    public int getResult() {
+        return result;
+    }
+
+    public void setResult(int result) {
+        this.result = result;
+    }
+
+    public NumberInt getNumber() {
         return number;
     }
 
-    public void setNumber(Number number) {
+    public void setNumber(NumberInt number) {
         this.number = number;
     }
 
