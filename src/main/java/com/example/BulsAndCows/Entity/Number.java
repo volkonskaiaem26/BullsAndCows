@@ -1,4 +1,4 @@
-package com.example.BulsAndCows;
+package com.example.BulsAndCows.Entity;
 
 public class Number {
 
@@ -11,7 +11,13 @@ public class Number {
     private int forth;
     static int FORTH = 1;
 
-    public Number(){
+    public Number(){}
+
+    public Number(int number){
+        this.first = number/1000;
+        this.second = (number%1000)/100;
+        this.third = (number%100)/10;
+        this.forth = number%10;
     }
 
     public int getFirst() {
